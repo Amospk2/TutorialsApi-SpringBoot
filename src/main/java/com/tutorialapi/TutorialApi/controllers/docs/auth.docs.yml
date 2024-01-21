@@ -1,0 +1,121 @@
+openapi: '3.0.2'
+info:
+  version: 1.0.0
+  title: Authentication API
+  description: API for user authentication and registration
+servers:
+  - url: /api/auth
+paths:
+  /signin:
+    post:
+      summary: Authenticate user
+      description: |
+        Authenticate user with username and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /signup:
+    post:
+      summary: Register new user
+      description: |
+        Register a new user with username, email, and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: User's username
+        password:
+          type: string
+          description: User's password
+      required:
+        - username
+        - password
+
+    SignupRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: User's username
+        email:
+          type: string
+          format: email
+          description: User's email address
+        password:
+          type: string
+          description: User's password
+        role:
+          type: array
+          items:
+            type: string
+          description: User's role (e.g., admin, mod, user)
+      required:
+        - username
+        - email
+        - password
+
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token for authentication
+        id:
+          type: integer
+          format: int64
+          description: User's ID
+        username:
+          type: string
+          description: User's username
+        email:
+          type: string
+          format: email
+          description: User's email address
+        roles:
+          type: array
+          items:
+            type: string
+          description: User's roles
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Response message

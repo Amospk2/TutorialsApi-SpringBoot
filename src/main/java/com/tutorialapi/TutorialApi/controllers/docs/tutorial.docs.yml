@@ -1,0 +1,229 @@
+openapi: '3.0.2'
+info:
+  version: 1.0.0
+  title: Tutorial API
+  description: API para gerenciar tutoriais
+servers:
+  - url: http://localhost:7851/api
+paths:
+  /tutorials:
+    post:
+      summary: Cria um novo tutorial
+      description: |
+        Cria um novo tutorial com base nos dados fornecidos.
+      requestBody:
+        description: Dados do tutorial a serem criados
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TutorialRequest'
+      responses:
+        '201':
+          description: Tutorial criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutorial'
+        '204':
+          description: Nenhum conteúdo encontrado
+        '500':
+          description: Erro interno do servidor
+    get:
+      summary: Obtém todos os tutoriais
+      description: |
+        Obtém todos os tutoriais ou filtra por título, se fornecido.
+      parameters:
+        - name: title
+          in: query
+          description: Título para filtrar os tutoriais
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de tutoriais obtida com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tutorial'
+        '204':
+          description: Nenhum conteúdo encontrado
+        '500':
+          description: Erro interno do servidor
+
+  /tutorials/{id}:
+    get:
+      summary: Obtém um tutorial por ID
+      description: |
+        Obtém um tutorial com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          description: ID do tutorial a ser obtido
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tutorial obtido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutorial'
+        '404':
+          description: Tutorial não encontrado
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza um tutorial por ID
+      description: |
+        Atualiza um tutorial com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          description: ID do tutorial a ser atualizado
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados do tutorial a serem atualizados
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tutorial'
+      responses:
+        '200':
+          description: Tutorial atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutorial'
+        '404':
+          description: Tutorial não encontrado
+        '500':
+          description: Erro interno do servidor
+    delete:
+      summary: Exclui um tutorial por ID
+      description: |
+        Exclui um tutorial com base no ID fornecido.
+      parameters:
+        - name: id
+          in: path
+          description: ID do tutorial a ser excluído
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Tutorial excluído com sucesso
+        '404':
+          description: Tutorial não encontrado
+        '500':
+          description: Erro interno do servidor
+
+  /tutorials/change-autor/{id}/{id_user}:
+    put:
+      summary: Atualiza o autor de um tutorial por ID
+      description: |
+        Atualiza o autor de um tutorial com base no ID do tutorial e no ID do novo autor fornecidos.
+      parameters:
+        - name: id
+          in: path
+          description: ID do tutorial a ser atualizado
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id_user
+          in: path
+          description: ID do novo autor
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Autor do tutorial atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutorial'
+        '404':
+          description: Tutorial ou novo autor não encontrado
+        '500':
+          description: Erro interno do servidor
+
+  /tutorials/published:
+    get:
+      summary: Obtém todos os tutoriais publicados
+      description: |
+        Obtém todos os tutoriais que foram publicados.
+      responses:
+        '200':
+          description: Lista de tutoriais publicados obtida com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tutorial'
+        '204':
+          description: Nenhum conteúdo encontrado
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    Tutorial:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID do tutorial
+        title:
+          type: string
+          description: Título do tutorial
+        description:
+          type: string
+          description: Descrição do tutorial
+        published:
+          type: boolean
+          description: Indica se o tutorial está publicado
+        autor:
+          $ref: '#/components/schemas/User'
+      # Adicione mais propriedades conforme necessário
+
+    TutorialRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título do tutorial
+        description:
+          type: string
+          description: Descrição do tutorial
+      required:
+        - title
+        - description
+
+    User:
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+  
+
