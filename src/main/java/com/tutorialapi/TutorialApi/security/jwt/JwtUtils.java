@@ -3,13 +3,13 @@ package com.tutorialapi.TutorialApi.security.jwt;
 import java.security.Key;
 import java.util.Date;
 
+import com.tutorialapi.TutorialApi.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.tutorialapi.TutorialApi.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -26,7 +26,7 @@ public class JwtUtils {
 
   public String generateJwtToken(Authentication authentication) {
 
-    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+    User userPrincipal = (User) authentication.getPrincipal();
 
     return Jwts.builder()
         .setSubject((userPrincipal.getUsername()))
